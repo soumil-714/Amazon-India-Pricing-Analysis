@@ -27,7 +27,8 @@ Slightly worse, and the link is weak but consistent. Average rating falls with e
 
 Spearman correlation between discount and rating is -0.16 (p < 0.001). Discount explains only about 3% of the variation in rating ranks, so this is an association, not proof that discounts cause lower ratings.
 
-- **No Simpson's paradox.** The relationship is negative inside every category group (-0.17 Computers and Accessories, -0.19 Electronics, -0.22 Home and Kitchen), so it is not a side effect of category mix.
+- **No Simpson's paradox.** The raw relationship is negative inside every category group (-0.17 Computers and Accessories, -0.19 Electronics, -0.22 Home and Kitchen), so it is not a side effect of category mix.
+- **It survives controls.** In a regression that holds price, category and rating count fixed, each extra 10 points of discount goes with about 0.016 fewer stars (95% CI -0.025 to -0.007). The estimate stays between -0.014 and -0.017 when I keep only listings with 100+ ratings, drop zero-discount listings, or drop the top 1% of prices. It is detectable in Electronics and Home and Kitchen but not in Computers and Accessories, where price may account for the raw link (not tested directly). The model explains only about 12% of the variation in ratings, and a 50-point difference in discount corresponds to roughly 0.1 stars.
 - **It does not hold everywhere.** Within price bands it is clear under ₹500 (-0.20) and at ₹1,000 to ₹2,500 (-0.22), but not detectable at ₹500 to ₹1,000, ₹2,500 to ₹10,000 or above ₹10,000.
 - **It does not depend on my deduplication.** The result is -0.150 on all 1,350 rated products and -0.163 on the 1,180 distinct rated listings.
 
@@ -65,6 +66,23 @@ Review text can only be analysed at title level (see Limitations). Comparing the
 A 0 to 100 **value score** combines the trust-adjusted rating (50%), the discount (30%) and the price relative to similar products (20%). It ranks *deal quality*, not product quality. Because the weights are a judgment call, I tested four alternatives (rank correlation 0.88 to 0.96) and report **24 robust value picks**, listings that stay in the top 50 under all five weightings. They are mostly cheap, heavily discounted everyday accessories (phone stands, HDMI and USB cables, screen protectors).
 
 ---
+## What this means
+
+These are patterns in one scraped snapshot, so read them as implications, not proven causes.
+
+1. **A deep discount is not a quality signal.** Deeper discounts go with slightly lower ratings, and the link survives controls for price, category and rating volume. Shoppers should not read a big discount as evidence that a product is well liked.
+2. **Star ratings need their rating count next to them.** Eleven listings rated 4.5 or higher rest on fewer than 100 ratings, and one 5.0 rests on five. Platforms and buyers should show the rating volume, or a confidence-adjusted rating, alongside the stars.
+3. **Sellers should not expect discounts to buy better reviews.** I found no reliable sign, in any category group or price band, that deeper discounts go with higher ratings.
+4. **Category differences are larger than discount effects.** Electronics and Home and Kitchen sit about 0.12 to 0.13 stars below Computers and Accessories, a bigger gap than a 50-point swing in discount.
+
+**What I would test next:** price history (are discounts temporary?), brand effects, and per-review star ratings.
+
+## Does the discount-rating link survive controls?
+
+Spearman correlations showed that deeper discounts go with slightly lower ratings.
+Cheap items tend to have both deeper discounts and different ratings, and categories
+differ too. This notebook fits four regressions, adding one control at a time, to see
+whether the discount effect holds. Results are associations, not causes.
 
 ## Data and cleaning
 
@@ -93,6 +111,7 @@ The raw file has 1,465 rows and 16 columns, one scrape row per product with up t
 - **Statistics:** Spearman correlation and Kruskal-Wallis tests, because prices are heavily skewed (mean ₹3,305 against a median of ₹899). Ratings differ across category groups (Kruskal-Wallis p < 0.001), but the gaps are small.
 - **Price-premium flag:** 24 listings priced at 2x or more above their category median (categories with 10+ listings). It is a screen for manual review, not a verdict, because categories can mix product types and certified products legitimately cost more.
 - **Text analysis:** VADER sentiment on review titles, plus transparent keyword rules for complaint themes. VADER is English-only and rough, and 25 Hindi titles score neutral.
+- **Regression:** OLS with robust (HC3) standard errors, adding price, category and rating count one at a time. Ratings are whole-star scores, so a linear model is an approximation; an ordinal model could be a later robustness check.
 
 ## Tools
 
