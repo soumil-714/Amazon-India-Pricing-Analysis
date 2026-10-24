@@ -9,3 +9,4 @@ pymysql
 scikit-learn
 vaderSentiment
 jupyterlab
+statsmodels
